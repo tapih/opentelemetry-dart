@@ -20,6 +20,8 @@ export 'src/api/propagation/injectors/text_map_setter.dart' show TextMapSetter;
 export 'src/api/propagation/text_map_propagator.dart' show TextMapPropagator;
 export 'src/api/propagation/b3_multi_trace_context_propagator.dart'
     show B3MultiTraceContextPropagator;
+export 'src/api/propagation/datadog_trace_context_propagator.dart'
+    show DatadogTraceContextPropagator;
 export 'src/api/propagation/w3c_trace_context_propagator.dart'
     show W3CTraceContextPropagator;
 export 'src/api/span_processors/span_processor.dart' show SpanProcessor;
