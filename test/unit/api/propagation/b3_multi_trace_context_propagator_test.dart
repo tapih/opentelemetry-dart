@@ -36,8 +36,8 @@ class TestingExtractor implements api.TextMapGetter<Map<String, String>> {
 }
 
 void main() {
-  group('B3MultiTraceIdCommand', () {
-    final command = B3MultiTraceIdCommand();
+  group('B3MultiTraceIdPropagator', () {
+    final propagator = B3MultiTraceIdPropagator();
     group('extract', () {
       final testCases = [
         {
@@ -100,7 +100,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as Map<String, String>,
                 TestingExtractor(),
               ),
@@ -109,7 +109,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command
+            final actual = propagator
                 .extract(
                   testCase['input']! as Map<String, String>,
                   TestingExtractor(),
@@ -130,7 +130,7 @@ void main() {
     group('inject', () {
       test('should inject value', () {
         final testCarrier = <String, String>{};
-        command.inject(
+        propagator.inject(
           testCarrier,
           TestingInjector(),
           api.TraceId.fromString(valid32),
@@ -140,8 +140,8 @@ void main() {
     });
   });
 
-  group('B3MultiSpanIdCommand', () {
-    final command = B3MultiSpanIdCommand();
+  group('B3MultiSpanIdPropagator', () {
+    final propagator = B3MultiSpanIdPropagator();
     group('extract', () {
       final testCases = [
         {
@@ -194,7 +194,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as Map<String, String>,
                 TestingExtractor(),
               ),
@@ -203,7 +203,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command
+            final actual = propagator
                 .extract(
                   testCase['input']! as Map<String, String>,
                   TestingExtractor(),
@@ -224,7 +224,7 @@ void main() {
     group('inject', () {
       test('should inject value', () {
         final testCarrier = <String, String>{};
-        command.inject(
+        propagator.inject(
           testCarrier,
           TestingInjector(),
           api.SpanId.fromString(valid16),
@@ -234,8 +234,8 @@ void main() {
     });
   });
 
-  group('B3MultiTraceFlagsCommand', () {
-    final command = B3MultiTraceFlagsCommand();
+  group('B3MultiTraceFlagsPropagator', () {
+    final propagator = B3MultiTraceFlagsPropagator();
     group('extract', () {
       final testCases = [
         {
@@ -279,7 +279,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as String,
                 TestingExtractor(),
               ),
@@ -288,7 +288,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command.extract(
+            final actual = propagator.extract(
               testCase['input']! as Map<String, String>,
               TestingExtractor(),
             );
@@ -324,7 +324,7 @@ void main() {
       for (final testCase in testCases) {
         test(testCase['name'], () {
           final testCarrier = <String, String>{};
-          command.inject(
+          propagator.inject(
             testCarrier,
             TestingInjector(),
             testCase['input']! as int,

@@ -43,8 +43,8 @@ class TestingExtractor implements api.TextMapGetter<Map<String, String>> {
 }
 
 void main() {
-  group('DatadogTraceIdPropagationCommand', () {
-    final command = DatadogTraceIdPropagationCommand();
+  group('DatadogTraceIdPropagator', () {
+    final propagator = DatadogTraceIdPropagator();
     group('extract', () {
       final testCases = [
         {
@@ -95,7 +95,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as Map<String, String>,
                 TestingExtractor(),
               ),
@@ -104,7 +104,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command
+            final actual = propagator
                 .extract(
                   testCase['input']! as Map<String, String>,
                   TestingExtractor(),
@@ -125,7 +125,7 @@ void main() {
     group('inject', () {
       test('should inject value', () {
         final testCarrier = <String, String>{};
-        command.inject(
+        propagator.inject(
           testCarrier,
           TestingInjector(),
           api.TraceId.fromString(sampleTraceIdHexStr),
@@ -135,8 +135,8 @@ void main() {
     });
   });
 
-  group('DatadogSpanIdPropagationCommand', () {
-    final command = DatadogSpanIdPropagationCommand();
+  group('DatadogSpanIdPropagator', () {
+    final propagator = DatadogSpanIdPropagator();
     group('extract', () {
       final testCases = [
         {
@@ -187,7 +187,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as Map<String, String>,
                 TestingExtractor(),
               ),
@@ -196,7 +196,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command
+            final actual = propagator
                 .extract(
                   testCase['input']! as Map<String, String>,
                   TestingExtractor(),
@@ -217,7 +217,7 @@ void main() {
     group('inject', () {
       test('should inject value', () {
         final testCarrier = <String, String>{};
-        command.inject(
+        propagator.inject(
           testCarrier,
           TestingInjector(),
           api.SpanId.fromString(sampleSpanIdHexStr),
@@ -227,8 +227,8 @@ void main() {
     });
   });
 
-  group('DatadogSamplingPriorityPropagationCommand', () {
-    final command = DatadogSamplingPriorityPropagationCommand();
+  group('DatadogSamplingPriorityPropagator', () {
+    final propagator = DatadogSamplingPriorityPropagator();
 
     group('extract', () {
       final testCases = [
@@ -268,7 +268,7 @@ void main() {
         test(testCase['name'], () {
           if (testCase['isError']! as bool) {
             expect(
-              () => command.extract(
+              () => propagator.extract(
                 testCase['input']! as String,
                 TestingExtractor(),
               ),
@@ -277,7 +277,7 @@ void main() {
                   '${testCase['name']}, but successful (Expected: ${testCase['expected']})',
             );
           } else {
-            final actual = command.extract(
+            final actual = propagator.extract(
               testCase['input']! as Map<String, String>,
               TestingExtractor(),
             );
@@ -295,7 +295,7 @@ void main() {
       group('inject', () {
         test('should inject value', () {
           final testCarrier = <String, String>{};
-          command.inject(
+          propagator.inject(
             testCarrier,
             TestingInjector(),
             api.TraceFlags.sampled,

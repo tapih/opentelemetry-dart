@@ -5,41 +5,41 @@ import '../../api/context/context.dart' as api;
 
 import '../../../api.dart' as api;
 
-/// [PropagationCommand] is responsible for extracting and injecting a value of type [T] from a carrier.
-abstract class PropagationCommand<T> {
+/// [SubPropagator] is responsible for extracting and injecting a value of type [T] from a carrier.
+abstract class SubPropagator<T> {
   T extract(dynamic carrier, api.TextMapGetter getter);
 
   void inject(dynamic carrier, api.TextMapSetter setter, T value);
 }
 
-/// [TraceIdPropagationCommand] is responsible for extracting and injecting a [api.TraceId] from a carrier.
-typedef TraceIdPropagationCommand = PropagationCommand<api.TraceId>;
+/// [TraceIdPropagator] is responsible for extracting and injecting a [api.TraceId] from a carrier.
+typedef TraceIdPropagator = SubPropagator<api.TraceId>;
 
-/// [SpanIdPropagationCommand] is responsible for extracting and injecting a [api.SpanId] from a carrier.
-typedef SpanIdPropagationCommand = PropagationCommand<api.SpanId>;
+/// [SpanIdPropagator] is responsible for extracting and injecting a [api.SpanId] from a carrier.
+typedef SpanIdPropagator = SubPropagator<api.SpanId>;
 
-/// [TraceFlagsPropagationCommand] is responsible for extracting and injecting a [api.TraceFlags] from a carrier.
-typedef TraceFlagsPropagationCommand = PropagationCommand<int>;
+/// [TraceFlagsPropagator] is responsible for extracting and injecting a [api.TraceFlags] from a carrier.
+typedef TraceFlagsPropagator = SubPropagator<int>;
 
-/// [TraceStatePropagationCommand] is responsible for extracting and injecting a [api.TraceState] from a carrier.
-typedef TraceStatePropagationCommand = PropagationCommand<api.TraceState>;
+/// [TraceStatePropagator] is responsible for extracting and injecting a [api.TraceState] from a carrier.
+typedef TraceStatePropagator = SubPropagator<api.TraceState>;
 
 /// [GeneralPropagator] is a general purpose propagator that can be used to create a propagator for any format.
 class GeneralPropagator<
-    T extends TraceIdPropagationCommand,
-    S extends SpanIdPropagationCommand,
-    F extends TraceFlagsPropagationCommand,
-    A extends TraceStatePropagationCommand> implements api.TextMapPropagator {
-  final T traceIdCommand;
-  final S spanIdCommand;
-  final F traceFlagsCommand;
-  final A traceStateCommand;
+    T extends TraceIdPropagator,
+    S extends SpanIdPropagator,
+    F extends TraceFlagsPropagator,
+    A extends TraceStatePropagator> implements api.TextMapPropagator {
+  final T traceIdPropagator;
+  final S spanIdPropagator;
+  final F traceFlagsPropagator;
+  final A traceStatePropagator;
 
   GeneralPropagator(
-    this.traceIdCommand,
-    this.spanIdCommand,
-    this.traceFlagsCommand,
-    this.traceStateCommand,
+    this.traceIdPropagator,
+    this.spanIdPropagator,
+    this.traceFlagsPropagator,
+    this.traceStatePropagator,
   );
 
   @override
@@ -52,10 +52,10 @@ class GeneralPropagator<
       return context.withSpan(
         NonRecordingSpan(
           api.SpanContext.remote(
-            traceIdCommand.extract(carrier, getter),
-            spanIdCommand.extract(carrier, getter),
-            traceFlagsCommand.extract(carrier, getter),
-            traceStateCommand.extract(carrier, getter),
+            traceIdPropagator.extract(carrier, getter),
+            spanIdPropagator.extract(carrier, getter),
+            traceFlagsPropagator.extract(carrier, getter),
+            traceStatePropagator.extract(carrier, getter),
           ),
         ),
       );
@@ -71,16 +71,16 @@ class GeneralPropagator<
       return;
     }
 
-    traceIdCommand.inject(carrier, setter, spanContext.traceId);
-    spanIdCommand.inject(carrier, setter, spanContext.spanId);
-    traceFlagsCommand.inject(carrier, setter, spanContext.traceFlags);
-    traceStateCommand.inject(carrier, setter, spanContext.traceState);
+    traceIdPropagator.inject(carrier, setter, spanContext.traceId);
+    spanIdPropagator.inject(carrier, setter, spanContext.spanId);
+    traceFlagsPropagator.inject(carrier, setter, spanContext.traceFlags);
+    traceStatePropagator.inject(carrier, setter, spanContext.traceState);
   }
 }
 
 
-/// [NoopTraceStatePropagationCommand] is a no-op implementation of [TraceStatePropagationCommand].
-class NoopTraceStatePropagationCommand implements TraceStatePropagationCommand {
+/// [NoopTraceStatePropagator] is a no-op implementation of [TraceStatePropagator].
+class NoopTraceStatePropagator implements TraceStatePropagator {
   /// [extract] always returns an empty [api.TraceState].
   @override
   TraceState extract(dynamic carrier, api.TextMapGetter getter) {

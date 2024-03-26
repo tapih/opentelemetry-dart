@@ -11,14 +11,14 @@ import '../../../api.dart' as api;
 class B3MultiTraceContextPropagator extends GeneralPropagator {
   B3MultiTraceContextPropagator()
       : super(
-          B3MultiTraceIdCommand(),
-          B3MultiSpanIdCommand(),
-          B3MultiTraceFlagsCommand(),
-          NoopTraceStatePropagationCommand(),
+          B3MultiTraceIdPropagator(),
+          B3MultiSpanIdPropagator(),
+          B3MultiTraceFlagsPropagator(),
+          NoopTraceStatePropagator(),
         );
 }
 
-class B3MultiTraceIdCommand implements TraceIdPropagationCommand {
+class B3MultiTraceIdPropagator implements TraceIdPropagator {
   static const key = 'x-b3-traceid';
 
   /// [extract] constructs a [api.TraceId] from a carrier.
@@ -49,7 +49,7 @@ class B3MultiTraceIdCommand implements TraceIdPropagationCommand {
   }
 }
 
-class B3MultiSpanIdCommand implements SpanIdPropagationCommand {
+class B3MultiSpanIdPropagator implements SpanIdPropagator {
   static const key = 'x-b3-spanid';
 
   /// [extract] constructs a [api.SpanId] from a carrier.
@@ -80,7 +80,7 @@ class B3MultiSpanIdCommand implements SpanIdPropagationCommand {
   }
 }
 
-class B3MultiTraceFlagsCommand implements TraceFlagsPropagationCommand {
+class B3MultiTraceFlagsPropagator implements TraceFlagsPropagator {
   static const sampledKey = 'x-b3-sampled';
   static const debugKey = 'x-b3-flags';
 

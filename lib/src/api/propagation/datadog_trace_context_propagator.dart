@@ -10,22 +10,22 @@ import '../../../api.dart' as api;
 /// See https://docs.datadoghq.com/tracing/other_telemetry/connect_logs_and_traces/opentelemetry?tab=python
 /// and https://docs.datadoghq.com/tracing/guide/send_traces_to_agent_by_api/?tab=shell#model for details.
 class DatadogTraceContextPropagator extends GeneralPropagator<
-    DatadogTraceIdPropagationCommand,
-    DatadogSpanIdPropagationCommand,
-    DatadogSamplingPriorityPropagationCommand,
-    NoopTraceStatePropagationCommand> {
+    DatadogTraceIdPropagator,
+    DatadogSpanIdPropagator,
+    DatadogSamplingPriorityPropagator,
+    NoopTraceStatePropagator> {
   DatadogTraceContextPropagator()
       : super(
-          DatadogTraceIdPropagationCommand(),
-          DatadogSpanIdPropagationCommand(),
-          DatadogSamplingPriorityPropagationCommand(),
-          NoopTraceStatePropagationCommand(),
+          DatadogTraceIdPropagator(),
+          DatadogSpanIdPropagator(),
+          DatadogSamplingPriorityPropagator(),
+          NoopTraceStatePropagator(),
         );
 }
 
-/// [DatadogTraceIdPropagationCommand] is a [TraceIdPropagationCommand] that extracts and injects
+/// [DatadogTraceIdPropagator] is a [TraceIdPropagator] that extracts and injects
 /// [api.TraceId].
-class DatadogTraceIdPropagationCommand implements TraceIdPropagationCommand {
+class DatadogTraceIdPropagator implements TraceIdPropagator {
   static const key = 'x-datadog-trace-id';
 
   static final _max = BigInt.parse('f' * 32, radix: 16);
@@ -64,9 +64,9 @@ class DatadogTraceIdPropagationCommand implements TraceIdPropagationCommand {
   }
 }
 
-/// [DatadogSpanIdPropagationCommand] is a [SpanIdPropagationCommand] that extracts and injects
+/// [DatadogSpanIdPropagator] is a [SpanIdPropagator] that extracts and injects
 /// [api.SpanId].
-class DatadogSpanIdPropagationCommand implements SpanIdPropagationCommand {
+class DatadogSpanIdPropagator implements SpanIdPropagator {
   static const key = 'x-datadog-parent-id';
 
   static final _max = BigInt.parse('f' * 16, radix: 16);
@@ -103,10 +103,10 @@ class DatadogSpanIdPropagationCommand implements SpanIdPropagationCommand {
   }
 }
 
-/// [DatadogSamplingPriorityPropagationCommand] is a [TraceFlagsPropagationCommand] that extracts
+/// [DatadogSamplingPriorityPropagator] is a [TraceFlagsPropagator] that extracts
 /// and injects [api.TraceFlags].
-class DatadogSamplingPriorityPropagationCommand
-    implements TraceFlagsPropagationCommand {
+class DatadogSamplingPriorityPropagator
+    implements TraceFlagsPropagator {
   static const key = 'x-datadog-sampling-priority';
 
   static const _sampledOn = '1';
